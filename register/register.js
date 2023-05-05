@@ -1,16 +1,42 @@
-const form = document.getElementById('register');
-form.addEventListener('submit', function(event) {
-  event.preventDefault();
+// URL of your MockAPI
+const apiURL = 'https://643cc81ef0ec48ce9049e65f.mockapi.io/api/v1/user';
+const isLoggedIn = localStorage.getItem('isLoggedIn');
 
-  const formData = new FormData(form);
-  const userData = Object.fromEntries(formData.entries());
+// Register function
+const registerForm = document.querySelector('#register-form');
 
-  fetch('https://64533f36c18adbbdfe98541e.mockapi.io/', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(userData)
-  })
-  });
+function register() {
+    registerForm.addEventListener('submit', (event) => {
+        event.preventDefault();;
 
+        const data = {
+            name: document.getElementById('UsernameX').value,
+            email: document.getElementById('EmailX').value,
+            password: document.getElementById('PasswordX').value
+        };
+
+        fetch(apiURL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+
+                }
+                document.getElementById('register-form').reset(); // mengosongkan nilai input
+                document.getElementById('register-success').classList.remove('d-none'); // menampilkan notifikasi
+                return response.json();
+            })
+            .then(data => {
+                console.log('Success:', data);
+            })
+            .catch(error => {
+                document.getElementById('register-failure').classList.remove('d-none'); // menampilkan notifikasi danger
+                console.error('Error:', error);
+            });
+    })
+};
